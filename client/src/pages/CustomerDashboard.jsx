@@ -6,13 +6,14 @@ import CakeGrid from "../components/CakeGrid";
 import api from "@/utils/api";
 import { toast, Toaster } from "sonner";
 import Navbar from "../components/Navbar";
+import { Menu } from 'lucide-react';
 
 const CATEGORIES = ["All", "Birthday", "Wedding", "Custom", "Anniversary", "Cupcake", "Other"];
 
 export default function CustomerDashboard() {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const [collapsed, setCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Cake data states
   const [featured, setFeatured] = useState([]);
@@ -93,13 +94,20 @@ export default function CustomerDashboard() {
     <div className="min-h-screen flex flex-col">
       <Toaster position="top-right" richColors />
       {/* Sticky Navbar */}
-      <div className="sticky top-0 z-40 bg-white shadow ml-64">
-        <Navbar />
+      <div className="sticky top-0 z-40 bg-white shadow w-full">
+        <div className="flex items-center justify-between px-4 py-2 md:ml-64">
+          <Navbar />
+          {/* Hamburger for mobile */}
+          <button className="md:hidden p-2" onClick={() => setSidebarOpen(true)}>
+            <Menu size={28} />
+          </button>
+        </div>
       </div>
-      <div className="flex flex-1 min-h-0 ml-64">
+      <div className="flex flex-1 min-h-0 w-full">
         {/* Sidebar */}
-        <aside className="w-64 bg-gray-100 p-6 border-r min-h-screen fixed left-0 top-0 z-30 flex flex-col justify-between">
-          <nav className={`flex flex-col space-y-4 transition-opacity duration-300 ${collapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+        {/* Desktop Sidebar */}
+        <aside className="hidden md:flex w-64 bg-gray-100 p-6 border-r min-h-screen fixed left-0 top-0 z-30 flex-col justify-between">
+          <nav className="flex flex-col space-y-4">
             <Link to="/dashboard/customer" className="text-blue-700">Dashboard Home</Link>
             <Link to="/orders" className="text-blue-600">My Orders</Link>
             <Link to="/wishlist" className="text-blue-600">Wishlist</Link>
@@ -109,8 +117,26 @@ export default function CustomerDashboard() {
           </nav>
           <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
         </aside>
+        {/* Mobile Sidebar Drawer */}
+        {sidebarOpen && (
+          <div className="fixed inset-0 z-40 flex md:hidden">
+            <div className="w-64 bg-gray-100 p-6 border-r min-h-screen flex flex-col justify-between">
+              <nav className="flex flex-col space-y-4">
+                <Link to="/dashboard/customer" className="text-blue-700" onClick={() => setSidebarOpen(false)}>Dashboard Home</Link>
+                <Link to="/orders" className="text-blue-600" onClick={() => setSidebarOpen(false)}>My Orders</Link>
+                <Link to="/wishlist" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Wishlist</Link>
+                <Link to="/cart" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Cart</Link>
+                <Link to="/profile" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Profile</Link>
+                <Link to="/dashboard/customer" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Home</Link>
+              </nav>
+              <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
+            </div>
+            {/* Overlay */}
+            <div className="flex-1 bg-black bg-opacity-30" onClick={() => setSidebarOpen(false)}></div>
+          </div>
+        )}
         {/* Main Content (Scrollable) */}
-        <main className="flex-1 p-8 space-y-10 overflow-y-auto min-h-0 flex flex-col">
+        <main className="flex-1 p-4 md:p-8 space-y-6 md:space-y-10 overflow-y-auto min-h-0 flex flex-col md:ml-64">
           {loading ? (
             <div>Loading cakes...</div>
           ) : (
@@ -123,7 +149,7 @@ export default function CustomerDashboard() {
               {/* Category-wise Cakes */}
               <section>
                 <h2 className="text-xl font-semibold mb-2 mt-8">Browse by Category</h2>
-                <div className="flex space-x-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-4">
                   {CATEGORIES.map(cat => (
                     <button
                       key={cat}
@@ -150,7 +176,7 @@ export default function CustomerDashboard() {
           )}
         </main>
         {/* Notifications Panel */}
-        <section className="w-80 bg-white border-l p-6 shadow-lg h-screen sticky top-0 flex flex-col">
+        <section className="hidden lg:flex w-80 bg-white border-l p-6 shadow-lg h-screen sticky top-0 flex-col">
           <h2 className="text-lg font-bold mb-4">Notifications</h2>
           <button
             className="mb-4 px-3 py-1 bg-blue-600 text-white rounded text-sm"
@@ -181,9 +207,25 @@ export default function CustomerDashboard() {
             )}
           </div>
         </section>
+        {/* Mobile Notifications Panel */}
+        <section className="flex lg:hidden w-full bg-white border-t p-4 shadow-lg fixed bottom-0 left-0 z-20">
+          <div className="flex-1 overflow-x-auto flex gap-4">
+            {notifications.slice(0, 3).map(n => (
+              <div
+                key={n._id}
+                className={`p-3 rounded cursor-pointer transition min-w-[180px] ${!n.read ? "bg-blue-50" : "bg-gray-100"}`}
+                onClick={() => !n.read && handleMarkAsRead(n._id)}
+              >
+                <div className="font-semibold text-sm">{n.message}</div>
+                <div className="text-xs text-gray-500">{new Date(n.createdAt).toLocaleString()}</div>
+                {!n.read && <span className="text-xs text-blue-600 ml-2">Mark as read</span>}
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
       {/* Footer (regular, not sticky) */}
-      <div className="bg-white shadow ml-64 mt-auto">
+      <div className="bg-white shadow w-full mt-auto md:ml-64">
         <Footer />
       </div>
     </div>

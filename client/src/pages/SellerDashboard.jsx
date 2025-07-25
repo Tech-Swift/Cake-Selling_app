@@ -11,6 +11,7 @@ import {
   DialogDescription,
   DialogFooter
 } from "@/components/ui/dialog";
+import { Menu } from 'lucide-react';
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function SellerDashboard() {
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [reviewsError, setReviewsError] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -96,7 +98,8 @@ export default function SellerDashboard() {
   return (
     <div className="min-h-screen flex flex-row w-full">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-100 p-6 border-r min-h-full flex flex-col justify-between">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 bg-gray-100 p-6 border-r min-h-screen fixed left-0 top-0 z-30 flex-col justify-between">
         <nav className="flex flex-col space-y-4">
           <Link to="/dashboard/seller" className="text-blue-700">Dashboard Home</Link>
           <Link to="/cakes/my" className="text-blue-600">My Cakes</Link>
@@ -105,12 +108,32 @@ export default function SellerDashboard() {
         </nav>
         <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
       </aside>
+      {/* Mobile Sidebar Drawer */}
+      {sidebarOpen && (
+        <div className="fixed inset-0 z-40 flex md:hidden">
+          <div className="w-64 bg-gray-100 p-6 border-r min-h-screen flex flex-col justify-between">
+            <nav className="flex flex-col space-y-4">
+              <Link to="/dashboard/seller" className="text-blue-700" onClick={() => setSidebarOpen(false)}>Dashboard Home</Link>
+              <Link to="/cakes/my" className="text-blue-600" onClick={() => setSidebarOpen(false)}>My Cakes</Link>
+              <Link to="/orders/seller" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Orders</Link>
+              <Link to="/profile" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Profile</Link>
+            </nav>
+            <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
+          </div>
+          {/* Overlay */}
+          <div className="flex-1 bg-black bg-opacity-30" onClick={() => setSidebarOpen(false)}></div>
+        </div>
+      )}
+      {/* Hamburger for mobile */}
+      <button className="md:hidden fixed top-4 left-4 z-50 bg-white p-2 rounded shadow" onClick={() => setSidebarOpen(true)}>
+        <Menu size={28} />
+      </button>
       {/* Main Content */}
-      <main className="flex-1 p-8 flex flex-col items-start">
+      <main className="flex-1 p-4 md:p-8 flex flex-col items-start md:ml-64">
         {/* Hero and Stats Card Side by Side */}
-        <div className="flex flex-row gap-8 w-full mb-10">
+        <div className="flex flex-col lg:flex-row gap-8 w-full mb-10">
           {/* Hero Section */}
-          <div className="flex flex-col py-10 bg-blue-50 rounded-xl w-2/3 pl-8 shadow">
+          <div className="flex flex-col py-6 md:py-10 bg-blue-50 rounded-xl w-full lg:w-2/3 pl-4 md:pl-8 shadow mb-4 lg:mb-0">
             <div className="w-20 h-20 rounded-full bg-blue-200 flex items-center justify-center text-4xl font-bold mb-3">
               {seller?.name?.[0] || "S"}
             </div>
@@ -120,7 +143,7 @@ export default function SellerDashboard() {
             <p className="italic text-blue-600 text-lg text-left">"A little progress each day adds up to big results!"</p>
           </div>
           {/* Stats Card */}
-          <div className="flex flex-col justify-center py-10 bg-green-50 rounded-xl w-1/3 pl-8 shadow min-w-[220px]">
+          <div className="flex flex-col justify-center py-6 md:py-10 bg-green-50 rounded-xl w-full lg:w-1/3 pl-4 md:pl-8 shadow min-w-[180px]">
             <div className="mb-6">
               <div className="text-2xl font-bold text-green-800">${stats.deliveredRevenue?.toLocaleString() ?? 0}</div>
               <div className="text-gray-600">Revenue (Delivered)</div>
@@ -136,8 +159,8 @@ export default function SellerDashboard() {
         ) : error ? (
           <p className="text-red-600">{error}</p>
         ) : null}
-        <div className="flex flex-row gap-8 w-full">
-          <div className="w-1/2 min-w-[320px] py-4 h-[100%] mt-0">
+        <div className="flex flex-col lg:flex-row gap-8 w-full">
+          <div className="w-full lg:w-1/2 min-w-[220px] py-4 h-[100%] mt-0">
             <SalesOverview
               totalOrders={stats.totalOrders}
               totalRevenue={stats.totalRevenue}
@@ -149,7 +172,7 @@ export default function SellerDashboard() {
               deliveredChartData={stats.deliveredChartData}
             />
           </div>
-          <section className="w-1/2 min-w-[220px] py-4 h-[400px] mt-0">
+          <section className="w-full lg:w-1/2 min-w-[180px] py-4 h-[400px] mt-0">
             <h2 className="text-2xl font-bold mb-4">Order Reviews</h2>
             {reviewsLoading ? (
               <p>Loading reviews...</p>
@@ -224,7 +247,7 @@ export default function SellerDashboard() {
         </div>
       </main>
       {/* Notifications Panel */}
-      <section className="w-80 bg-white border-l p-6 shadow-lg h-screen sticky top-0 flex flex-col">
+      <section className="hidden lg:flex w-80 bg-white border-l p-6 shadow-lg h-screen sticky top-0 flex-col">
         <h2 className="text-lg font-bold mb-4">Notifications</h2>
         <button
           className="mb-4 px-3 py-1 bg-blue-600 text-white rounded text-sm"
@@ -253,6 +276,22 @@ export default function SellerDashboard() {
               ))}
             </ul>
           )}
+        </div>
+      </section>
+      {/* Mobile Notifications Panel */}
+      <section className="flex lg:hidden w-full bg-white border-t p-4 shadow-lg fixed bottom-0 left-0 z-20">
+        <div className="flex-1 overflow-x-auto flex gap-4">
+          {notifications.slice(0, 3).map(n => (
+            <div
+              key={n._id}
+              className={`p-3 rounded cursor-pointer transition min-w-[180px] ${!n.read ? "bg-blue-50" : "bg-gray-100"}`}
+              onClick={() => !n.read && handleMarkAsRead(n._id)}
+            >
+              <div className="font-semibold text-sm">{n.message}</div>
+              <div className="text-xs text-gray-500">{new Date(n.createdAt).toLocaleString()}</div>
+              {!n.read && <span className="text-xs text-blue-600 ml-2">Mark as read</span>}
+            </div>
+          ))}
         </div>
       </section>
     </div>
