@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import api from "@/utils/api"; // Axios instance
+import api from "../utils/api"; // Axios instance
 
 export default function SignupForm({ onSwitch }) {
   const [form, setForm] = useState({ name: "", email: "", password: "" });

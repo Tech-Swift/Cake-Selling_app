@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "@/utils/api";
+import api from "../utils/api";
 import Footer from "../components/Footer";
 import { toast, Toaster } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
@@ -131,7 +131,7 @@ export default function Checkout() {
                     <td className="p-2 flex items-center">
                       {item.cake.image && (
                         <img
-                          src={item.cake.image.startsWith('http') ? item.cake.image : `http://localhost:5000/${item.cake.image.replace(/^\//, '')}`}
+                          src={item.cake.image.startsWith('http') ? item.cake.image : `https://cake-selling-app.onrender.com/${item.cake.image.replace(/^\//, '')}`}
                           alt={item.cake.name}
                           className="w-12 h-12 object-cover rounded mr-2"
                         />

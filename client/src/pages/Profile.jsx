@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { toast, Toaster } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
 

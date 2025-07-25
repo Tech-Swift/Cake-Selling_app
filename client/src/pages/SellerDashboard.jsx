@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SalesOverview from "@/components/SalesOverview";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { Star } from 'lucide-react';
 import {
   Dialog,

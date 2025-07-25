@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -87,7 +87,7 @@ export default function CakesMy() {
       isAvailable: cake.isAvailable ?? true,
       stock: cake.stock ?? 0,
     });
-    setEditImagePreview(cake.image ? (cake.image.startsWith('http') ? cake.image : `http://localhost:5000/${cake.image.replace(/^\//, '')}`) : null);
+    setEditImagePreview(cake.image ? (cake.image.startsWith('http') ? cake.image : `https://cake-selling-app.onrender.com/${cake.image.replace(/^\//, '')}`) : null);
     setEditError(null);
     setEditModal(true);
   };
@@ -195,7 +195,7 @@ export default function CakesMy() {
                         <CardContent className="flex flex-col items-center p-0.5 w-full">
                           {cake.image && (
                             <img
-                              src={cake.image.startsWith('http') ? cake.image : `http://localhost:5000/${cake.image.replace(/^\//, '')}`}
+                              src={cake.image.startsWith('http') ? cake.image : `https://cake-selling-app.onrender.com/${cake.image.replace(/^\//, '')}`}
                               alt={cake.name}
                               className="w-20 h-20 object-cover mb-1 rounded mx-auto"
                             />
@@ -325,7 +325,7 @@ export default function CakesMy() {
             <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-800" onClick={() => setSelectedCake(null)}>&times;</button>
             {selectedCake.image && (
               <img
-                src={selectedCake.image.startsWith('http') ? selectedCake.image : `http://localhost:5000/${selectedCake.image.replace(/^\//, '')}`}
+                src={selectedCake.image.startsWith('http') ? selectedCake.image : `https://cake-selling-app.onrender.com/${selectedCake.image.replace(/^\//, '')}`}
                 alt={selectedCake.name}
                 className="w-48 h-48 object-cover rounded mb-4"
               />

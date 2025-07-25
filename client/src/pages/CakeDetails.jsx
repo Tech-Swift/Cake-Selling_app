@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import api from "@/utils/api";
+import api from "../utils/api";
 
 export default function CakeDetails() {
   const { id } = useParams();
@@ -24,7 +24,7 @@ export default function CakeDetails() {
       <Link to="/" className="text-blue-600 underline mb-4 inline-block">&larr; Back to Home</Link>
       {cake.image && (
         <img
-          src={cake.image.startsWith('http') ? cake.image : `http://localhost:5000/${cake.image.replace(/^\//, '')}`}
+          src={cake.image.startsWith('http') ? cake.image : `https://cake-selling-app.onrender.com/${cake.image.replace(/^\//, '')}`}
           alt={cake.name}
           className="w-full h-64 object-cover rounded mb-4"
         />

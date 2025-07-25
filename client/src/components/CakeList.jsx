@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { Link } from "react-router-dom";
 
 export default function CakeList() {
@@ -44,7 +44,7 @@ export default function CakeList() {
             <div key={cake._id} className="border rounded p-4 shadow flex flex-col items-center">
               {cake.image && (
                 <img
-                  src={cake.image.startsWith('http') ? cake.image : `http://localhost:5000/${cake.image.replace(/^\//, '')}`}
+                  src={cake.image.startsWith('http') ? cake.image : `https://cake-selling-app.onrender.com/${cake.image.replace(/^\//, '')}`}
                   alt={cake.name}
                   className="w-32 h-32 object-cover mb-2 rounded"
                 />

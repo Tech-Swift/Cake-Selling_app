@@ -9,7 +9,7 @@ export default function CakeGrid({ cakes, onAddToCart, onAddToWishlist }) {
   const handleAddToCart = async (cake) => {
     try {
       // Fetch current cart
-      const res = await import('@/utils/api').then(m => m.default.get('/cart'));
+      const res = await import('../utils/api').then(m => m.default.get('/cart'));
       const items = res.data?.items || [];
       if (items.length > 0) {
         const existingSeller = items[0].cake.createdBy?._id || items[0].cake.createdBy;
@@ -20,7 +20,7 @@ export default function CakeGrid({ cakes, onAddToCart, onAddToWishlist }) {
         }
       }
       // If here, either cart is empty or sellers match, proceed to add
-      await import('@/utils/api').then(m => m.default.post('/cart/add', { cakeId: cake._id }));
+      await import('../utils/api').then(m => m.default.post('/cart/add', { cakeId: cake._id }));
       toast.success(`Added ${cake.name} to cart!`);
     } catch (err) {
       toast.error(err.response?.data?.error || 'Failed to add to cart');
@@ -35,7 +35,7 @@ export default function CakeGrid({ cakes, onAddToCart, onAddToWishlist }) {
         <div key={cake._id} className="border rounded p-4 shadow flex flex-col items-center bg-white">
           {cake.image && (
             <img
-              src={cake.image.startsWith('http') ? cake.image : `http://localhost:5000/${cake.image.replace(/^\//, '')}`}
+              src={cake.image.startsWith('http') ? cake.image : `https://cake-selling-app.onrender.com/${cake.image.replace(/^\//, '')}`}
               alt={cake.name}
               className="w-32 h-32 object-cover mb-2 rounded"
             />

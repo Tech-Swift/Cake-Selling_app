@@ -4,6 +4,7 @@ import CakeList from "../components/CakeList";
 import FeaturedCakes from "../components/FeaturedCakes";
 import Testimonials from "../components/Testimonials";
 import Footer from "../components/Footer";
+import api from "../utils/api";
 
 export default function Home() {
   const [cakes, setCakes] = useState([]);

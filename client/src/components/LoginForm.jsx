@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { useAuth } from "../context/AuthContext"; 
 
 export default function LoginForm({ onSwitch }) {

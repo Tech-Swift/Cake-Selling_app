@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "@/utils/api";
+import api from "../utils/api";
 import Footer from "../components/Footer";
 import { toast, Toaster } from "sonner";
 import { useAuth } from "../context/AuthContext";

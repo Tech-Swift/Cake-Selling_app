@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
 import CakeGrid from "../components/CakeGrid";
-import api from "@/utils/api";
+import api from "../utils/api";
 import { toast, Toaster } from "sonner";
 import Navbar from "../components/Navbar";
 import { Menu } from 'lucide-react';
