@@ -20,6 +20,8 @@ export default function Profile() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
   const [roleSwitcher, setRoleSwitcher] = useState(false);
+  const [roleRequest, setRoleRequest] = useState(null);
+  const [requestingRole, setRequestingRole] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -33,8 +35,19 @@ export default function Profile() {
       api.get("/orders/my-orders").then(res => setOrdersCount(res.data.length));
       api.get("/wishlist").then(res => setWishlistCount(res.data?.items?.length || 0));
       api.get("/cart").then(res => setCartCount(res.data?.items?.length || 0));
+      // Fetch role request status
+      fetchRoleRequest();
     }
   }, [user]);
+
+  const fetchRoleRequest = async () => {
+    try {
+      const response = await api.get("/users/me/role-request");
+      setRoleRequest(response.data.roleRequest);
+    } catch (error) {
+      console.error("Error fetching role request:", error);
+    }
+  };
 
   const handleEdit = () => setEditing(true);
   const handleCancel = () => {
@@ -114,6 +127,24 @@ export default function Profile() {
     } catch (error) {
       console.error("Role change error:", error);
       toast.error(error.response?.data?.message || "Failed to change role");
+    }
+  };
+
+  const handleRoleRequest = async (requestedRole) => {
+    setRequestingRole(true);
+    try {
+      const response = await api.post("/users/me/role-request", {
+        requestedRole,
+        reason: `User requesting ${requestedRole} role`
+      });
+      
+      toast.success("Role request submitted successfully! An admin will review your request.");
+      fetchRoleRequest(); // Refresh role request status
+    } catch (error) {
+      console.error("Role request error:", error);
+      toast.error(error.response?.data?.message || "Failed to submit role request");
+    } finally {
+      setRequestingRole(false);
     }
   };
 
@@ -268,6 +299,93 @@ export default function Profile() {
             Admin
           </button>
         </div>
+      </div>
+
+      {/* Role Request System */}
+      <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h2 className="text-xl font-semibold mb-2 text-blue-800">Role Request System</h2>
+        <p className="text-sm text-blue-700 mb-3">
+          Current role: <span className="font-bold capitalize">{user?.role || 'unknown'}</span>
+        </p>
+        
+        {/* Role Request Status */}
+        {roleRequest && (
+          <div className="mb-4 p-3 bg-white rounded border">
+            <h3 className="font-semibold text-gray-900 mb-2">Role Request Status</h3>
+            <div className="space-y-1 text-sm">
+              <p><span className="font-medium">Requested Role:</span> {roleRequest.requestedRole}</p>
+              <p><span className="font-medium">Status:</span> 
+                <span className={`ml-1 px-2 py-1 rounded text-xs ${
+                  roleRequest.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                  roleRequest.status === 'approved' ? 'bg-green-100 text-green-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {roleRequest.status}
+                </span>
+              </p>
+              <p><span className="font-medium">Request Date:</span> {new Date(roleRequest.requestDate).toLocaleDateString()}</p>
+              {roleRequest.adminNotes && (
+                <p><span className="font-medium">Admin Notes:</span> {roleRequest.adminNotes}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Request New Role */}
+        {(!roleRequest || roleRequest.status !== 'pending') && (
+          <div className="space-y-3">
+            <p className="text-sm text-blue-600">
+              Request a role change. An admin will review your request.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {user?.role !== 'seller' && (
+                <button
+                  onClick={() => handleRoleRequest('seller')}
+                  disabled={requestingRole}
+                  className="px-4 py-2 bg-green-600 text-white rounded text-sm hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {requestingRole ? 'Requesting...' : 'Request Seller Role'}
+                </button>
+              )}
+              {user?.role !== 'admin' && (
+                <button
+                  onClick={() => handleRoleRequest('admin')}
+                  disabled={requestingRole}
+                  className="px-4 py-2 bg-purple-600 text-white rounded text-sm hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {requestingRole ? 'Requesting...' : 'Request Admin Role'}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Pending Request Message */}
+        {roleRequest && roleRequest.status === 'pending' && (
+          <div className="mt-3 p-3 bg-yellow-100 border border-yellow-300 rounded">
+            <p className="text-sm text-yellow-800">
+              ⏳ Your role request is pending admin approval. You'll be notified once it's reviewed.
+            </p>
+          </div>
+        )}
+
+        {/* Approved Request Message */}
+        {roleRequest && roleRequest.status === 'approved' && (
+          <div className="mt-3 p-3 bg-green-100 border border-green-300 rounded">
+            <p className="text-sm text-green-800">
+              ✅ Your role request has been approved! Please log out and log back in to see your new role.
+            </p>
+          </div>
+        )}
+
+        {/* Rejected Request Message */}
+        {roleRequest && roleRequest.status === 'rejected' && (
+          <div className="mt-3 p-3 bg-red-100 border border-red-300 rounded">
+            <p className="text-sm text-red-800">
+              ❌ Your role request was rejected. You can submit a new request if needed.
+            </p>
+          </div>
+        )}
       </div>
       
       <div className="flex space-x-4 mt-8">

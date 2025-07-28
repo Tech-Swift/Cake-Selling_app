@@ -10,10 +10,8 @@ export default function Home() {
   const [cakes, setCakes] = useState([]);
 
   useEffect(() => {
-    // TODO: Replace with actual backend endpoint
-    fetch("/api/cakes")
-      .then(res => res.json())
-      .then(data => setCakes(data))
+    api.get("/cakes")
+      .then(res => setCakes(res.data))
       .catch(() => setCakes([]));
   }, []);
 
