@@ -6,6 +6,7 @@ const {
   updateMe,
   getAllUsers,
   updateUserRole,
+  updateMyRole,
   deleteUser,
 } = require('../controllers/userController');
 
@@ -14,6 +15,7 @@ const { protect, adminOnly } = require('../middleware/authMiddleware');
 // Logged-in user routes
 router.get('/me', protect, getMe);
 router.put('/me', protect, updateMe);
+router.put('/me/role', protect, updateMyRole); // Allow users to update their own role
 
 // Admin-only routes
 router.get('/', protect, adminOnly, getAllUsers);

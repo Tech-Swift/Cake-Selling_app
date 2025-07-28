@@ -19,21 +19,32 @@ export default function LoginForm({ onSwitch }) {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", form);
+      console.log("Login response:", res.data);
+      console.log("User role:", res.data.role);
+      
       login(res.data); // Store user in context and localStorage
       toast.success("Login successful! Redirecting...");
+      
       setTimeout(() => {
         const role = res.data.role;
+        console.log("Redirecting based on role:", role);
+        
         if (role === "customer") {
+          console.log("Redirecting to customer dashboard");
           navigate("/dashboard/customer", { replace: true });
         } else if (role === "seller") {
+          console.log("Redirecting to seller dashboard");
           navigate("/dashboard/seller", { replace: true });
         } else if (role === "admin") {
+          console.log("Redirecting to admin dashboard");
           navigate("/dashboard/admin", { replace: true });
         } else {
+          console.log("Unknown role, redirecting to default dashboard");
           navigate("/dashboard", { replace: true });
         }
       }, 1200); // 1.2s delay to allow toast to show
     } catch (err) {
+      console.error("Login error:", err);
       toast.error(err.response?.data?.message || "Login failed");
     }
   };

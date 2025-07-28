@@ -19,6 +19,7 @@ export default function Profile() {
   const [notifications, setNotifications] = useState({ email: true });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteInput, setDeleteInput] = useState("");
+  const [roleSwitcher, setRoleSwitcher] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -94,6 +95,27 @@ export default function Profile() {
     setDeleteInput("");
   };
   const handleNotificationChange = e => setNotifications(n => ({ ...n, [e.target.name]: e.target.checked }));
+
+  const handleRoleChange = async (newRole) => {
+    try {
+      const response = await api.put("/users/me/role", { role: newRole });
+      console.log("Role update response:", response.data);
+      
+      // Update the user in context and localStorage
+      const updatedUser = { ...user, role: newRole };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
+      toast.success(`Role changed to ${newRole}! Please log out and log back in to see changes.`);
+      
+      // Force a page reload to update the context
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    } catch (error) {
+      console.error("Role change error:", error);
+      toast.error(error.response?.data?.message || "Failed to change role");
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto p-6">
@@ -203,6 +225,51 @@ export default function Profile() {
           <span>Email notifications</span>
         </label>
       </div>
+      
+      {/* Role Switcher for Testing */}
+      <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <h2 className="text-xl font-semibold mb-2 text-yellow-800">Role Switcher (Testing)</h2>
+        <p className="text-sm text-yellow-700 mb-3">
+          Current role: <span className="font-bold capitalize">{user?.role || 'unknown'}</span>
+        </p>
+        <p className="text-sm text-yellow-600 mb-4">
+          This allows you to switch between user roles for testing purposes. 
+          In production, this would be handled by admin approval.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => handleRoleChange('customer')}
+            className={`px-4 py-2 rounded text-sm font-medium ${
+              user?.role === 'customer' 
+                ? 'bg-blue-600 text-white' 
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            }`}
+          >
+            Customer
+          </button>
+          <button
+            onClick={() => handleRoleChange('seller')}
+            className={`px-4 py-2 rounded text-sm font-medium ${
+              user?.role === 'seller' 
+                ? 'bg-green-600 text-white' 
+                : 'bg-green-100 text-green-700 hover:bg-green-200'
+            }`}
+          >
+            Seller
+          </button>
+          <button
+            onClick={() => handleRoleChange('admin')}
+            className={`px-4 py-2 rounded text-sm font-medium ${
+              user?.role === 'admin' 
+                ? 'bg-purple-600 text-white' 
+                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            }`}
+          >
+            Admin
+          </button>
+        </div>
+      </div>
+      
       <div className="flex space-x-4 mt-8">
         <button onClick={handleLogout} className="bg-red-600 text-white px-6 py-2 rounded">Logout</button>
         <button onClick={handleDeleteAccount} className="bg-gray-400 text-white px-6 py-2 rounded">Delete Account</button>

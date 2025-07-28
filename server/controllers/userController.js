@@ -66,6 +66,30 @@ exports.updateUserRole = async (req, res) => {
   });
 };
 
+// Allow user to update their own role (for testing purposes)
+exports.updateMyRole = async (req, res) => {
+  const { role } = req.body;
+
+  if (!['customer', 'seller', 'admin'].includes(role)) {
+    return res.status(400).json({ message: 'Invalid role' });
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user.id,
+    { role },
+    { new: true }
+  ).select('-password');
+
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  res.json({
+    message: 'Your role has been updated',
+    user,
+  });
+};
+
 // Admin: Delete a user
 exports.deleteUser = async (req, res) => {
   const user = await User.findByIdAndDelete(req.params.id);
