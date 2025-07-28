@@ -30,7 +30,9 @@ exports.createCake = async (cakeData) => {
 
 // Get all cakes (optionally filter by category)
 exports.getAllCakes = async (filter = {}) => {
-  return await Cake.find(filter).populate('createdBy', 'name email');
+  // Default to showing only available cakes
+  const defaultFilter = { isAvailable: true, ...filter };
+  return await Cake.find(defaultFilter).populate('createdBy', 'name email');
 };
 
 // Get single cake by ID
@@ -57,6 +59,17 @@ exports.deleteCake = async (cakeId, userId) => {
 };
 
 exports.getFeaturedCakes = async () => {
-  return await Cake.find({ featured: true }).populate('createdBy', 'name email');
+  // First try to get cakes marked as featured
+  let featuredCakes = await Cake.find({ isFeatured: true }).populate('createdBy', 'name email');
+  
+  // If no featured cakes, get the most recent cakes instead
+  if (featuredCakes.length === 0) {
+    featuredCakes = await Cake.find({ isAvailable: true })
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .populate('createdBy', 'name email');
+  }
+  
+  return featuredCakes;
 };
 
