@@ -3,33 +3,74 @@ const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
 
 exports.registerUser = async ({ name, email, password }) => {
-  const existingUser = await User.findOne({ email });
-  if (existingUser) throw new Error('User already exists');
+  try {
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new Error('User with this email already exists');
+    }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user = await User.create({ name, email, password: hashedPassword });
-  return {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    token: generateToken(user._id)
-  };
+    // Create new user
+    const user = await User.create({ 
+      name, 
+      email, 
+      password: hashedPassword 
+    });
+
+    // Generate token
+    const token = generateToken(user._id);
+
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token
+    };
+  } catch (error) {
+    // Re-throw validation errors
+    if (error.name === 'ValidationError') {
+      throw new Error('Please provide all required fields');
+    }
+    
+    // Re-throw duplicate key errors
+    if (error.code === 11000) {
+      throw new Error('User with this email already exists');
+    }
+    
+    // Re-throw other errors
+    throw error;
+  }
 };
 
 exports.loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
-  if (!user) throw new Error('Invalid credentials');
+  try {
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error('Invalid email or password');
+    }
 
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error('Invalid credentials');
+    // Check password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      throw new Error('Invalid email or password');
+    }
 
-  return {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    token: generateToken(user._id)
-  };
+    // Generate token
+    const token = generateToken(user._id);
+
+    return {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token
+    };
+  } catch (error) {
+    throw error;
+  }
 };
