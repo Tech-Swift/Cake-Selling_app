@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 require('dotenv').config();
-const mongoose = require('mongoose'); // Added for health check
 
 // Validate required environment variables
 const requiredEnvVars = ['MONGO_URI_PRODUCTION', 'JWT_SECRET'];
@@ -19,23 +18,8 @@ console.log('✅ All required environment variables are set');
 const app = express();
 
 // Enable CORS for both development and production
-const allowedOrigins = [
-  'http://localhost:5173',
-  'https://cake-selling-app.onrender.com',
-  'https://your-frontend-domain.com' // Add your frontend domain here
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: ['http://localhost:5173', 'https://cake-selling-app.onrender.com'],
   credentials: true
 }));
 
@@ -92,8 +76,7 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
@@ -134,7 +117,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
+// 404 handler - simplified for Express 5.x
 app.use((req, res) => {
   res.status(404).json({ message: 'Route not found' });
 });
