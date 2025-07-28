@@ -32,9 +32,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Uploaded files (should not be in version control)
-server/uploads/
-
 # Vite cache
 client/.vite/
 
