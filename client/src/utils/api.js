@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cake-selling-app.onrender.com/",
+  baseURL: "https://cake-selling-app.onrender.com/api", 
   withCredentials: true,
 });
 
