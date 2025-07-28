@@ -1,7 +1,5 @@
 client/.gitignore
 server/.gitignore
-.gitignore  # This line excludes the root .gitignore itself — REMOVE THIS if you want to keep it!
-
 
 # Node modules
 node_modules/
@@ -33,3 +31,13 @@ Thumbs.db
 # IDEs
 .vscode/
 .idea/
+
+# Uploaded files (should not be in version control)
+server/uploads/
+
+# Vite cache
+client/.vite/
+
+# Lock files (choose one package manager)
+# server/package-lock.json
+# server/pnpm-lock.yaml
