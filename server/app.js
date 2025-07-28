@@ -9,7 +9,8 @@ const app = express();
 
 //Enable Cors for frontend at localhost:5173
 app.use(cors({
-  origin: "*",
+  origin: 'http://localhost:5173',
+  credentials: true
 }))
 
 // Connect to DB
