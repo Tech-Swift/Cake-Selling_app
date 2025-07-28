@@ -1,8 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://cake-selling-app.onrender.com/api", // Updated to include /api prefix
-  withCredentials: true, 
+  baseURL: "https://cake-selling-app.onrender.com/",
+  withCredentials: true,
 });
 
 api.interceptors.request.use((config) => {
