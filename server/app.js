@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const compression = require('compression');
 require('dotenv').config();
 
 // Set default NODE_ENV if not provided
@@ -47,9 +48,18 @@ connectDB();
 
 // Middleware
 app.use(express.json());
+app.use(compression()); // Enable gzip compression
 
-// Serve uploaded images statically
-app.use('/uploads', express.static('uploads'));
+// Serve uploaded images statically with caching
+app.use('/uploads', express.static('uploads', {
+  maxAge: '1y', // Cache for 1 year
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    res.setHeader('Cache-Control', 'public, max-age=31536000'); // 1 year
+    res.setHeader('Expires', new Date(Date.now() + 31536000 * 1000).toUTCString());
+  }
+}));
 
 // Import routes
 const authRoutes = require('./routes/authRoutes');
