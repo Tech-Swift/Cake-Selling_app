@@ -20,6 +20,26 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['customer', 'seller', 'admin'],
     default: 'customer'
+  },
+  roleRequest: {
+    requestedRole: {
+      type: String,
+      enum: ['seller', 'admin'],
+      default: null
+    },
+    requestDate: {
+      type: Date,
+      default: null
+    },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: null
+    },
+    adminNotes: {
+      type: String,
+      default: null
+    }
   }
 }, { timestamps: true });
 

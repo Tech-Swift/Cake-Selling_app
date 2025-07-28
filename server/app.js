@@ -3,6 +3,13 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
+// Set default NODE_ENV if not provided
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = 'development';
+}
+
+console.log(`🚀 Starting server in ${process.env.NODE_ENV} mode`);
+
 // Validate required environment variables
 const requiredEnvVars = ['MONGO_URI_PRODUCTION', 'JWT_SECRET'];
 const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
@@ -17,9 +24,21 @@ console.log('✅ All required environment variables are set');
 
 const app = express();
 
-// Enable CORS for both development and production
+// CORS configuration based on environment
+const corsOrigins = process.env.CORS_ORIGINS 
+  ? process.env.CORS_ORIGINS.split(',') 
+  : [
+      'http://localhost:5173', 
+      'http://localhost:3000',
+      'https://cake-selling-app.onrender.com',
+      'https://cake-selling-app.vercel.app',
+      'https://cake-selling-app.netlify.app'
+    ];
+
+console.log('🌐 CORS origins:', corsOrigins);
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://cake-selling-app.onrender.com'],
+  origin: corsOrigins,
   credentials: true
 }));
 
