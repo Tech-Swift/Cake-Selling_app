@@ -89,7 +89,7 @@ export default function Profile() {
   };
   const handleLogout = () => {
     logout();
-    navigate("/auth?mode=login");
+    navigate("/");
   };
   const handleDeleteAccount = async () => {
     setShowDeleteModal(true);

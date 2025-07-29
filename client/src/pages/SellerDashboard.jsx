@@ -91,7 +91,7 @@ export default function SellerDashboard() {
   };
 
   const handleLogout = () => {
-    // Implement logout logic here if needed
+    logout();
     navigate("/");
   };
 
