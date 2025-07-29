@@ -1,4 +1,4 @@
-# 🍰 Cake Selling App
+# 🍰 CakeHouse
 
 A full-stack MERN (MongoDB, Express.js, React.js, Node.js) application for selling and managing cakes with role-based access control for customers, sellers, and administrators.
 
@@ -85,6 +85,7 @@ Cake-Selling_app/
 │   ├── validations/       # Input validation
 │   ├── uploads/           # File uploads
 │   └── package.json
+├── vercel.json            # Vercel deployment configuration
 └── README.md
 ```
 
@@ -243,10 +244,37 @@ The application implements role-based routing using React Router's `<Navigate />
 ## 🚀 Deployment
 
 ### Frontend (Vercel)
-1. Connect your GitHub repository to Vercel
-2. Set build command: `cd client && pnpm build`
-3. Set output directory: `client/dist`
-4. Deploy
+
+The project includes a `vercel.json` configuration file that handles:
+
+- **Client-side routing** - All routes redirect to `index.html` for React Router
+- **Build settings** - Automatic build configuration
+- **Output directory** - Proper dist folder configuration
+
+#### Deployment Steps:
+1. **Connect your GitHub repository to Vercel**
+2. **Vercel will automatically detect the configuration from `vercel.json`**
+3. **Set environment variables in Vercel dashboard:**
+   ```
+   NODE_ENV=production
+   VITE_API_URL=https://cake-selling-app.onrender.com/api
+   ```
+4. **Deploy**
+
+#### vercel.json Configuration:
+```json
+{
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "buildCommand": "cd client && pnpm build",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && pnpm install"
+}
+```
 
 ### Backend (Render)
 1. Connect your GitHub repository to Render

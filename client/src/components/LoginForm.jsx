@@ -19,27 +19,20 @@ export default function LoginForm({ onSwitch }) {
     e.preventDefault();
     try {
       const res = await api.post("/auth/login", form);
-      console.log("Login response:", res.data);
-      console.log("User role:", res.data.role);
       
       login(res.data); // Store user in context and localStorage
       toast.success("Login successful! Redirecting...");
       
       setTimeout(() => {
         const role = res.data.role;
-        console.log("Redirecting based on role:", role);
         
         if (role === "customer") {
-          console.log("Redirecting to customer dashboard");
           navigate("/dashboard/customer", { replace: true });
         } else if (role === "seller") {
-          console.log("Redirecting to seller dashboard");
           navigate("/dashboard/seller", { replace: true });
         } else if (role === "admin") {
-          console.log("Redirecting to admin dashboard");
           navigate("/dashboard/admin", { replace: true });
         } else {
-          console.log("Unknown role, redirecting to default dashboard");
           navigate("/dashboard", { replace: true });
         }
       }, 1200); // 1.2s delay to allow toast to show
@@ -55,7 +48,7 @@ export default function LoginForm({ onSwitch }) {
       <Input name="password" type="password" placeholder="Password" onChange={handleChange} required />
       <Button className="w-full">Login</Button>
       <p className="text-center text-sm">
-        Don’t have an account?{" "}
+        Don't have an account?{" "}
         <button type="button" onClick={onSwitch} className="text-blue-600 underline">
           Sign Up
         </button>

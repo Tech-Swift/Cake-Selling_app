@@ -22,13 +22,9 @@ export function CartProvider({ children }) {
       }
 
       const response = await api.get("/cart");
-      console.log("Cart API response:", response);
-      console.log("Cart response.data:", response.data);
       
       // Handle different response structures
       const items = response.data?.items || response.data || [];
-      console.log("Cart items after processing:", items);
-      console.log("Is items array?", Array.isArray(items));
       
       setCartItems(Array.isArray(items) ? items : []);
     } catch (error) {

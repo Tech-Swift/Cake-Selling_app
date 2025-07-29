@@ -22,13 +22,9 @@ export function WishlistProvider({ children }) {
       }
 
       const response = await api.get("/wishlist");
-      console.log("Wishlist API response:", response);
-      console.log("Wishlist response.data:", response.data);
       
       // Handle different response structures
       const items = response.data?.items || response.data || [];
-      console.log("Wishlist items after processing:", items);
-      console.log("Is items array?", Array.isArray(items));
       
       setWishlistItems(Array.isArray(items) ? items : []);
     } catch (error) {

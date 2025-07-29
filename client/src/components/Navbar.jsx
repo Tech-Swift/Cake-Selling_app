@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -6,7 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ShoppingCart, Heart, User, LogOut, Menu, X, Search } from "lucide-react";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, logout, isAuthenticated } = useAuth();
   const { cartCount } = useCart();
   const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
@@ -14,10 +14,14 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
-    setIsMenuOpen(false);
+  const handleLogout = async () => {
+    try {
+      logout();
+      navigate("/");
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   const handleSearch = (e) => {
@@ -41,7 +45,7 @@ export default function Navbar() {
                 <span className="text-white font-bold text-lg">🍰</span>
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
-                Cake Shop
+                CakeHouse
               </span>
             </Link>
           </div>
@@ -64,7 +68,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-        {user ? (
+        {user && isAuthenticated ? (
           <>
                 {/* Navigation Links */}
                 <div className="flex items-center space-x-6">
@@ -202,7 +206,7 @@ export default function Navbar() {
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
           <div className="md:hidden border-t border-gray-200 py-4">
-            {user ? (
+            {user && isAuthenticated ? (
               <div className="space-y-4">
                 <div className="flex items-center space-x-3 pb-4 border-b border-gray-200">
                   <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-600 rounded-full flex items-center justify-center">

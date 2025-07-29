@@ -1,14 +1,17 @@
+import React from "react";
+
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 text-gray-700 py-4 mt-8 border-t">
-      <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4">
-        <div className="mb-2 md:mb-0">&copy; {new Date().getFullYear()} Cake Shop. All rights reserved.</div>
-        <div className="flex space-x-4">
-          <a href="/" className="hover:underline">Home</a>
-          <a href="/auth?mode=login" className="hover:underline">Login</a>
-          <a href="/auth?mode=signup" className="hover:underline">Sign Up</a>
-          <a href="/about" className="hover:underline">About</a>
-          <a href="/contact" className="hover:underline">Contact</a>
+    <footer className="bg-gray-800 text-white py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="mb-2 md:mb-0">&copy; {new Date().getFullYear()} CakeHouse. All rights reserved.</div>
+          <div className="flex space-x-6">
+            <a href="/about" className="hover:text-pink-400 transition-colors">About</a>
+            <a href="/contact" className="hover:text-pink-400 transition-colors">Contact</a>
+            <a href="/privacy" className="hover:text-pink-400 transition-colors">Privacy</a>
+            <a href="/terms" className="hover:text-pink-400 transition-colors">Terms</a>
+          </div>
         </div>
       </div>
     </footer>

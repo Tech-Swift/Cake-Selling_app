@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const compression = require('compression');
+const path = require('path');
 require('dotenv').config();
 
 // Set default NODE_ENV if not provided

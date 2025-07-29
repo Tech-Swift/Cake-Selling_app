@@ -1,14 +1,11 @@
 import axios from "axios";
 
-// Determine the correct API base URL based on environment
 const getApiBaseURL = () => {
-  // If we're in development (localhost)
   if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
     return "http://localhost:5000/api";
   }
   
-  // If we're in production (deployed), always use Render backend
-  return "https://cake-selling-app.onrender.com/api";
+   return "https://cake-selling-app.onrender.com/api";
 };
 
 const api = axios.create({
