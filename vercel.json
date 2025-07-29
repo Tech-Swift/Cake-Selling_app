@@ -5,7 +5,8 @@
       "destination": "/index.html"
     }
   ],
-  "buildCommand": "cd client && pnpm build",
-  "outputDirectory": "client/dist",
-  "installCommand": "cd client && pnpm install"
+  "rootDirectory": "client",
+  "buildCommand": "pnpm build",
+  "outputDirectory": "dist",
+  "installCommand": "pnpm install"
 } 
