@@ -123,39 +123,8 @@ export default function CustomerDashboard() {
         </div>
       </div>
       <div className="flex flex-1 min-h-0 w-full">
-        {/* Sidebar */}
-        {/* Desktop Sidebar */}
-        <aside className="hidden md:flex w-64 bg-gray-100 p-6 border-r min-h-screen fixed left-0 top-0 z-30 flex-col justify-between">
-          <nav className="flex flex-col space-y-4">
-            <Link to="/dashboard/customer" className="text-blue-700">Dashboard Home</Link>
-            <Link to="/orders" className="text-blue-600">My Orders</Link>
-            <Link to="/wishlist" className="text-blue-600">Wishlist</Link>
-            <Link to="/cart" className="text-blue-600">Cart</Link>
-            <Link to="/profile" className="text-blue-600">Profile</Link>
-            <Link to="/dashboard/customer" className="text-blue-600">Home</Link>
-          </nav>
-          <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
-        </aside>
-        {/* Mobile Sidebar Drawer */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 z-40 flex md:hidden">
-            <div className="w-64 bg-gray-100 p-6 border-r min-h-screen flex flex-col justify-between">
-              <nav className="flex flex-col space-y-4">
-                <Link to="/dashboard/customer" className="text-blue-700" onClick={() => setSidebarOpen(false)}>Dashboard Home</Link>
-                <Link to="/orders" className="text-blue-600" onClick={() => setSidebarOpen(false)}>My Orders</Link>
-                <Link to="/wishlist" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Wishlist</Link>
-                <Link to="/cart" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Cart</Link>
-                <Link to="/profile" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Profile</Link>
-                <Link to="/dashboard/customer" className="text-blue-600" onClick={() => setSidebarOpen(false)}>Home</Link>
-              </nav>
-              <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
-            </div>
-            {/* Overlay */}
-            <div className="flex-1 bg-black bg-opacity-30" onClick={() => setSidebarOpen(false)}></div>
-          </div>
-        )}
         {/* Main Content (Scrollable) */}
-        <main className="flex-1 p-4 md:p-8 space-y-6 md:space-y-10 overflow-y-auto min-h-0 flex flex-col md:ml-64">
+        <main className="flex-1 p-4 md:p-8 space-y-6 md:space-y-10 overflow-y-auto min-h-0">
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
