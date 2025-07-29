@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import SalesOverview from "@/components/SalesOverview";
 import api from "../utils/api";
 import { Star } from 'lucide-react';
@@ -15,6 +16,7 @@ import { Menu } from 'lucide-react';
 
 export default function SellerDashboard() {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [stats, setStats] = useState({ totalOrders: 0, totalRevenue: 0, totalCakesSold: 0, chartData: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,6 +29,7 @@ export default function SellerDashboard() {
   const [reviewsError, setReviewsError] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
 
   useEffect(() => {
     setLoading(true);
@@ -91,9 +94,10 @@ export default function SellerDashboard() {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate("/");
-  };
+  console.log("Logout clicked");
+  logout();
+  navigate("/");
+};
 
   return (
     <div className="min-h-screen flex flex-row w-full">
@@ -106,7 +110,7 @@ export default function SellerDashboard() {
           <Link to="/orders/seller" className="text-blue-600">Orders</Link>
           <Link to="/profile" className="text-blue-600">Profile</Link>
         </nav>
-        <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout</button>
+        <button onClick={handleLogout} className="text-red-600 text-left mt-8">Logout </button>
       </aside>
       {/* Mobile Sidebar Drawer */}
       {sidebarOpen && (
@@ -296,4 +300,4 @@ export default function SellerDashboard() {
       </section>
     </div>
   );
-} 
+}
