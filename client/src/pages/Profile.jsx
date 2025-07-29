@@ -257,50 +257,6 @@ export default function Profile() {
         </label>
       </div>
       
-      {/* Role Switcher for Testing */}
-      <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <h2 className="text-xl font-semibold mb-2 text-yellow-800">Role Switcher (Testing)</h2>
-        <p className="text-sm text-yellow-700 mb-3">
-          Current role: <span className="font-bold capitalize">{user?.role || 'unknown'}</span>
-        </p>
-        <p className="text-sm text-yellow-600 mb-4">
-          This allows you to switch between user roles for testing purposes. 
-          In production, this would be handled by admin approval.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => handleRoleChange('customer')}
-            className={`px-4 py-2 rounded text-sm font-medium ${
-              user?.role === 'customer' 
-                ? 'bg-blue-600 text-white' 
-                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-            }`}
-          >
-            Customer
-          </button>
-          <button
-            onClick={() => handleRoleChange('seller')}
-            className={`px-4 py-2 rounded text-sm font-medium ${
-              user?.role === 'seller' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-green-100 text-green-700 hover:bg-green-200'
-            }`}
-          >
-            Seller
-          </button>
-          <button
-            onClick={() => handleRoleChange('admin')}
-            className={`px-4 py-2 rounded text-sm font-medium ${
-              user?.role === 'admin' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
-            }`}
-          >
-            Admin
-          </button>
-        </div>
-      </div>
-
       {/* Role Request System */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <h2 className="text-xl font-semibold mb-2 text-blue-800">Role Request System</h2>
@@ -323,7 +279,10 @@ export default function Profile() {
                   {roleRequest.status}
                 </span>
               </p>
-              <p><span className="font-medium">Request Date:</span> {new Date(roleRequest.requestDate).toLocaleDateString()}</p>
+              <p><span className="font-medium">Request Date:</span> {roleRequest.requestDate ? new Date(roleRequest.requestDate).toLocaleString() : ''}</p>
+              {roleRequest.approvalDate && (
+                <p><span className="font-medium">Approval Date:</span> {new Date(roleRequest.approvalDate).toLocaleString()}</p>
+              )}
               {roleRequest.adminNotes && (
                 <p><span className="font-medium">Admin Notes:</span> {roleRequest.adminNotes}</p>
               )}
