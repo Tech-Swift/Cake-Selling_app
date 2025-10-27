@@ -76,12 +76,45 @@ exports.getUserOrders = async (userId) => {
     .sort({ createdAt: -1 });
 };
 
-exports.getOrderById = async (orderId, userId) => {
-  const order = await Order.findById(orderId).populate('items.cake');
-  if (!order) throw new Error('Order not found');
-  if (order.user.toString() !== userId.toString()) {
-    throw new Error('Unauthorized access to this order');
+exports.createOrder = async (orderData) => {
+  const order = new Order(orderData);
+  await order.save();
+  
+  // Fetch buyer's name
+  const buyer = await User.findById(orderData.user);
+  const buyerName = buyer?.name || 'A customer';
+
+  // Notify the user
+  await notificationService.createNotification({
+    user: orderData.user,
+    type: 'order',
+    message: `${buyerName}, your order has been placed. Total amount: ₦${orderData.totalAmount}`,
+    data: { orderId: order._id }
+  });
+
+  // Notify the seller(s) only once per order
+  const cakes = await Promise.all(orderData.items.map(item => Cake.findById(item.cake)));
+  const sellerIds = Array.from(new Set(
+    cakes
+      .filter(cake => cake && cake.createdBy && cake.createdBy.toString() !== orderData.user.toString())
+      .map(cake => cake.createdBy.toString())
+  ));
+  
+  for (const sellerId of sellerIds) {
+    await notificationService.createNotification({
+      user: sellerId,
+      type: 'order',
+      message: `${buyerName} has placed an order`,
+      data: { orderId: order._id }
+    });
   }
+  
+  return order;
+};
+
+exports.getOrderById = async (orderId) => {
+  const order = await Order.findById(orderId).populate('items.cake').populate('user');
+  if (!order) throw new Error('Order not found');
   return order;
 };
 

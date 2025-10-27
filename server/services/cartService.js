@@ -71,3 +71,8 @@ exports.checkoutCart = async (userId) => {
   await Cart.deleteOne({ user: userId });
   return { status: 'success', paidItems: cart.items };
 };
+
+exports.clearCart = async (userId) => {
+  await Cart.deleteOne({ user: userId });
+  return { status: 'success', message: 'Cart cleared' };
+};

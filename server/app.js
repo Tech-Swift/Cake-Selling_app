@@ -96,6 +96,9 @@ app.use('/api/addresses', addressRoutes);
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
 
+const checkoutRoutes = require('./routes/checkoutRoutes');
+app.use('/api/checkout', checkoutRoutes);
+
 // Routes
 app.get('/', (req, res) => {
   res.send('Cake Selling API is running...');

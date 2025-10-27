@@ -1,0 +1,318 @@
+{
+  "info": {
+    "name": "Cart to Payment Flow Tests",
+    "description": "Complete testing collection for cart-based payment flow with country selection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "cartId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paymentReference",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Login User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('token', response.token);",
+              "    pm.collectionVariables.set('userId', response.user.id);",
+              "    console.log('Login successful, token saved');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testcustomer@example.com\",\n  \"password\": \"testpassword123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get Cart",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('cartId', response._id);",
+              "    console.log('Cart ID saved:', response._id);",
+              "    console.log('Cart items:', response.items.length);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cart",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cart"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Get Payment Options",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/payment-options",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "payment-options"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Get Cart Summary",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/cart-summary",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "cart-summary"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Process Checkout - Cash on Delivery",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('orderId', response.data.order._id);",
+              "    console.log('COD Order created:', response.data.order._id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shippingAddress\": {\n    \"street\": \"123 Test Street\",\n    \"city\": \"Test City\",\n    \"state\": \"Test State\",\n    \"zipCode\": \"12345\",\n    \"country\": \"Nigeria\"\n  },\n  \"paymentMethod\": \"cash_on_delivery\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Process Checkout - Online Payment (Nigeria)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('orderId', response.data.order._id);",
+              "    pm.collectionVariables.set('paymentReference', response.data.reference);",
+              "    console.log('Online Payment Order created:', response.data.order._id);",
+              "    console.log('Payment Reference:', response.data.reference);",
+              "    console.log('Authorization URL:', response.data.authorizationUrl);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shippingAddress\": {\n    \"street\": \"123 Test Street\",\n    \"city\": \"Test City\",\n    \"state\": \"Test State\",\n    \"zipCode\": \"12345\",\n    \"country\": \"Nigeria\"\n  },\n  \"paymentMethod\": \"online_payment\",\n  \"paymentCountry\": \"Nigeria\",\n  \"email\": \"testcustomer@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Process Checkout - Online Payment (Ghana)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('orderId', response.data.order._id);",
+              "    pm.collectionVariables.set('paymentReference', response.data.reference);",
+              "    console.log('Ghana Payment Order created:', response.data.order._id);",
+              "    console.log('Payment Reference:', response.data.reference);",
+              "    console.log('Authorization URL:', response.data.authorizationUrl);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"shippingAddress\": {\n    \"street\": \"456 Ghana Street\",\n    \"city\": \"Accra\",\n    \"state\": \"Greater Accra\",\n    \"zipCode\": \"00233\",\n    \"country\": \"Ghana\"\n  },\n  \"paymentMethod\": \"online_payment\",\n  \"paymentCountry\": \"Ghana\",\n  \"email\": \"testcustomer@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/process",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "process"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "9. Verify Payment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/verify-payment/{{paymentReference}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "verify-payment", "{{paymentReference}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "10. Get Order Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/checkout/order-status/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "checkout", "order-status", "{{orderId}}"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+

@@ -1,0 +1,269 @@
+{
+  "info": {
+    "name": "Paystack Integration Tests",
+    "description": "Complete testing collection for Paystack payment integration",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "paymentId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reference",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Register User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('token', response.token);",
+              "    pm.collectionVariables.set('userId', response.user.id);",
+              "    console.log('Token saved:', response.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Test Customer\",\n  \"email\": \"testcustomer@example.com\",\n  \"password\": \"testpassword123\",\n  \"phone\": \"+2341234567890\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Login User",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('token', response.token);",
+              "    pm.collectionVariables.set('userId', response.user.id);",
+              "    console.log('Login successful, token saved');",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"testcustomer@example.com\",\n  \"password\": \"testpassword123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Create Order",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('orderId', response.order._id);",
+              "    console.log('Order created:', response.order._id);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"items\": [\n    {\n      \"cake\": \"507f1f77bcf86cd799439011\",\n      \"quantity\": 2,\n      \"price\": 500\n    }\n  ],\n  \"totalAmount\": 1000,\n  \"shippingAddress\": {\n    \"street\": \"123 Test Street\",\n    \"city\": \"Test City\",\n    \"state\": \"Test State\",\n    \"zipCode\": \"12345\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Initialize Payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const response = pm.response.json();",
+              "    pm.collectionVariables.set('paymentId', response.data.paymentId);",
+              "    pm.collectionVariables.set('reference', response.data.reference);",
+              "    console.log('Payment initialized:', response.data.paymentId);",
+              "    console.log('Authorization URL:', response.data.authorizationUrl);",
+              "    console.log('Reference:', response.data.reference);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderId\": \"{{orderId}}\",\n  \"email\": \"testcustomer@example.com\",\n  \"amount\": 1000,\n  \"metadata\": {\n    \"customerName\": \"Test Customer\",\n    \"phone\": \"+2341234567890\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/initialize",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "payments", "initialize"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Verify Payment",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/verify/{{reference}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "payments", "verify", "{{reference}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Get Payment Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/status/{{paymentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "payments", "status", "{{paymentId}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Test Webhook",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event\": \"charge.success\",\n  \"data\": {\n    \"reference\": \"{{reference}}\",\n    \"amount\": 100000,\n    \"status\": \"success\",\n    \"id\": \"transaction_id_here\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/payments/webhook",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "payments", "webhook"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+

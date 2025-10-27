@@ -3,13 +3,15 @@ const router = express.Router();
 const paymentController = require('../controllers/paymentController');
 const { protect } = require('../middleware/authMiddleware');
 
-// Initiate payment
+// Paystack payment routes
+router.post('/initialize', protect, paymentController.initializePayment);
+router.get('/verify/:reference', paymentController.verifyPayment);
+router.post('/webhook', paymentController.handleWebhook);
+router.get('/status/:paymentId', protect, paymentController.getPaymentStatus);
+
+// Legacy routes (kept for backward compatibility)
 router.post('/initiate', protect, paymentController.initiatePayment);
-
-// Confirm payment (simulate webhook)
 router.post('/confirm', protect, paymentController.confirmPayment);
-
-//status of payment
 router.get('/:paymentId', protect, paymentController.getPaymentById);
 
 module.exports = router;

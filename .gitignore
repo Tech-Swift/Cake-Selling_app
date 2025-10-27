@@ -38,3 +38,6 @@ client/.vite/
 # Lock files (choose one package manager)
 # server/package-lock.json
 # server/pnpm-lock.yaml
+
+test*
+*.md
